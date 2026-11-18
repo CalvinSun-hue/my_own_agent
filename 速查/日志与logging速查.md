@@ -129,7 +129,7 @@ ZeroDivisionError: division by zero
 
 ## 6. 阶段 4 里日志怎么接起来的
 
-**业务侧（`阶段3_重写/agent.py`）三处**：
+**业务侧（`阶段3/agent.py`）三处**：
 
 | 位置 | 记什么 | 事后能回答 |
 |---|---|---|
@@ -138,7 +138,7 @@ ZeroDivisionError: division by zero
 | 工具执行后 | 工具名 + 结果 | 工具是没跑，还是跑错了 |
 | `_call_model()` 异常分支 | `log.exception` 然后 `raise` | 哪一行炸的、谁调上来的 |
 
-**测试侧（`阶段4_重写/support.py` 的 `capture_logs`）**：
+**测试侧（`阶段4/support.py` 的 `capture_logs`）**：
 
 ```
 with 块开始 → root.addHandler(临时 FileHandler) + root.setLevel(DEBUG)

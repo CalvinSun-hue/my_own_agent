@@ -6,7 +6,7 @@
   - 日志（log）  = 自动的记录：不用 print，事后还能查"当时到底发生了什么"
 
 测试层（test layer）天然是横切的（cross-cutting）：它不生产业务代码，只检查别人写的代码。
-所以本文件破一次例：用 sys.path 把 `阶段3_重写` 加进模块搜索路径。
+所以本文件破一次例：用 sys.path 把 `阶段3` 加进模块搜索路径。
 （中文目录名不能当 Python 包 import，只能这么绕——见 交接文档 §6。）
 
 本文件三件东西：
@@ -31,9 +31,9 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-# 把 阶段3_重写 目录加进 sys.path：之后 `import tools` / `import agent` 才能找到它们。
+# 把 阶段3 目录加进 sys.path：之后 `import tools` / `import agent` 才能找到它们。
 # 注意：必须在 import tools / agent **之前**执行（所以这段代码写在这里，不在函数里）。
-PHASE3_DIR = Path(__file__).resolve().parent.parent / "阶段3_重写"
+PHASE3_DIR = Path(__file__).resolve().parent.parent / "阶段3"
 if str(PHASE3_DIR) not in sys.path:
     sys.path.insert(0, str(PHASE3_DIR))
 
@@ -52,7 +52,7 @@ class TmpDirTest(unittest.TestCase):
     为什么必须用临时目录：测试产生的文件绝不能写进项目里（会留垃圾、会互相污染、
     甚至可能把真实数据写坏）。测试要"可重复、互不影响、不留痕迹"，靠的就是这个。
 
-    参考写法：阶段1_重写/test_task.py 的 StoreTest、阶段2_重写/test_llm_config.py 的 Base。
+    参考写法：阶段1/test_task.py 的 StoreTest、阶段2/test_llm_config.py 的 Base。
     """
 
     def setUp(self) -> None:
@@ -86,7 +86,7 @@ def build_registry() -> ToolRegistry:
       - hello(name: str = "同学") -> str，返回 f"你好，{name}"
         工具描述 "打个招呼。"，参数说明 {"name": "对方的名字"}
 
-    提示：阶段3_重写/test_tools.py 里有个一模一样的 make_registry()，照它写。
+    提示：阶段3/test_tools.py 里有个一模一样的 make_registry()，照它写。
           —— 这是"复习"，不是新知识。
     """
     reg = ToolRegistry()

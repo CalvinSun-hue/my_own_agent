@@ -8,7 +8,7 @@
   第 2 次请求 → 模型给出最终回答
 
 PyCharm：右键本文件 → Run 'Unittests in test_agent_log'
-命令行： cd 阶段4_重写 ; python -m unittest test_agent_log -v
+命令行： cd 阶段4 ; python -m unittest test_agent_log -v
 """
 
 import sys
@@ -19,7 +19,7 @@ from pathlib import Path
 # 所以先把自己的目录插进去，下一行才能 import support。
 sys.path.insert(0, str(Path(__file__).parent))
 
-# 注意：support 被 import 时，会把 阶段3_重写 也加进 sys.path —— agent / tools 才能 import。
+# 注意：support 被 import 时，会把 阶段3 也加进 sys.path —— agent / tools 才能 import。
 from support import FakeToolClient, TmpDirTest, build_registry, capture_logs, model_msg, tool_call
 
 from agent import Agent

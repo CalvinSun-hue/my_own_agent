@@ -1,7 +1,7 @@
 """task.py 的验收测试。标准库就够，不联网、不用装包。
 
 PyCharm：右键本文件 → Run 'Unittests in test_task'
-命令行： cd 阶段1_重写 ; python -m unittest test_task -v
+命令行： cd 阶段1 ; python -m unittest test_task -v
 
 红 → 绿就是你的进度条。测试不要改。
 """

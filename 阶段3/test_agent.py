@@ -1,7 +1,7 @@
 """阶段 3 · agent.py 的验收测试。标准库就够，不联网、不花钱、不装包。
 
 PyCharm：右键本文件 → Run 'Unittests in test_agent'
-命令行： cd 阶段3_重写 ; python -m unittest test_agent -v
+命令行： cd 阶段3 ; python -m unittest test_agent -v
 
 这里的假客户端是"能假装要工具"的：剧本里可以写纯文本，也可以写 tool_calls。
 """

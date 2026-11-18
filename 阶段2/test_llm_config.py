@@ -1,7 +1,7 @@
 """阶段 2 · llm_config.py 的验收测试。标准库就够，不联网、不花钱、不装包。
 
 PyCharm：右键本文件 → Run 'Unittests in test_llm_config'
-命令行： cd 阶段2_重写 ; python -m unittest test_llm_config -v
+命令行： cd 阶段2 ; python -m unittest test_llm_config -v
 """
 
 import os

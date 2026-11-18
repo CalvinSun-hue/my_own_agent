@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "阶段2_重写"))
+sys.path.insert(0, str(Path(__file__).parent / "阶段2"))
 from llm_config import load_config, create_client, FakeClient
 
 cfg = load_config()

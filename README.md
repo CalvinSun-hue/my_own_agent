@@ -34,19 +34,19 @@ PythonProject/
 │   ├── 字符串与路径速查表.md   不懂某个方法先看这张表
 │   └── 实验_方法速查.py       想确认某个行为时才跑它
 │
-├── 阶段1_重写/              ← ✅ 结业
+├── 阶段1/              ← ✅ 结业
 │   ├── task.py             你的实现（Task / TaskStore / parse_due）
 │   ├── test_task.py        29 个验收测试
 │   ├── 说明_为什么.md       15 节"为什么" + C 对照表
 │   └── 结构总览.md          类/方法/import/装饰器/调用关系全景图
 │
-├── 阶段2_重写/              ← ✅ 结业
+├── 阶段2/              ← ✅ 结业
 │   ├── llm_config.py       你的实现（.env / Config / FakeClient / create_client 合在一个文件）
 │   ├── test_llm_config.py  21 个验收测试
 │   ├── 说明_为什么.md       12 节"为什么" + 4 个坑
 │   └── 结构总览.md          类/方法/import/装饰器/调用关系全景图
 │
-├── 阶段3_重写/              ← ✅ 结业
+├── 阶段3/              ← ✅ 结业
 │   ├── tools.py            你填：工具注册表（Tool / ToolRegistry / @tool / schemas / execute）
 │   ├── agent.py            你填：agent 循环（Agent.__init__ / _call_model / chat）
 │   ├── test_tools.py       15 个验收测试
@@ -75,22 +75,22 @@ PythonProject/
 2. 跑某阶段测试：右键该阶段的 `test_xxx.py` → `Run 'Unittests in test_xxx'`
 3. 看自测输出：右键 `task.py` / `llm_config.py` → `Run 'task'` / `Run 'llm_config'`
 
-> ⚠️ **别点基类**：`阶段1_重写` 里的 `StoreTest`、`阶段2_重写` 里的 `Base` 都只有 0 个测试，点了会显示"没有发现测试"。要跑就点具体子类，或者点整个文件。
+> ⚠️ **别点基类**：`阶段1` 里的 `StoreTest`、`阶段2` 里的 `Base` 都只有 0 个测试，点了会显示"没有发现测试"。要跑就点具体子类，或者点整个文件。
 
 ## 两个环境坑（都踩过）
 
 | 现象 | 原因 | 解法 |
 |---|---|---|
 | `UnicodeEncodeError: 'gbk' codec can't encode '\u2713'` | cmd/PowerShell 默认 GBK，编不了 `✓`/`✔` | PyCharm 的 Run 窗口是 UTF-8，直接用；命令行加 `$env:PYTHONIOENCODING='utf-8'` |
-| `ModuleNotFoundError: No module named 'llm_config'` | 中文目录名不能当 Python 包 import | 在调用方加 `sys.path.insert(0, str(Path(__file__).parent / "阶段2_重写"))` |
+| `ModuleNotFoundError: No module named 'llm_config'` | 中文目录名不能当 Python 包 import | 在调用方加 `sys.path.insert(0, str(Path(__file__).parent / "阶段2"))` |
 
 ## 参考代码映射（studymate → 本仓库）
 
 | 阶段 | studymate 里的文件 | 本仓库 |
 |---|---|---|
-| 1 | `studymate/tasks.py`（159 行） | `阶段1_重写/task.py` |
-| 2 | `studymate/config.py` + `llm.py`（189 行） | `阶段2_重写/llm_config.py`（合并成一个文件） |
-| 3 | `studymate/tools.py` + `study_tools.py` + `agent.py` | `阶段3_重写/tools.py` + `agent.py`（工具只留 2 个示例） |
+| 1 | `studymate/tasks.py`（159 行） | `阶段1/task.py` |
+| 2 | `studymate/config.py` + `llm.py`（189 行） | `阶段2/llm_config.py`（合并成一个文件） |
+| 3 | `studymate/tools.py` + `study_tools.py` + `agent.py` | `阶段3/tools.py` + `agent.py`（工具只留 2 个示例） |
 | 4 | `tests/test_studymate.py` | 待建 |
 | 5 | `studymate/notes.py` + 
 otes/` | 待建 |

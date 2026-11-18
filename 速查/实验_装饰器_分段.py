@@ -3,7 +3,7 @@
 用法：右键 Run 本文件，从上往下看 5 段输出。
 每一段都是最小可运行版，不需要 tools.py，也不联网。
 
-看完再回去填 阶段3_重写/tools.py 的 ToolRegistry.tool()。
+看完再回去填 阶段3/tools.py 的 ToolRegistry.tool()。
 """
 
 from __future__ import annotations

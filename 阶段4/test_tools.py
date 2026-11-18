@@ -9,7 +9,7 @@
   3. 只断言**必须**成立的事；别断言实现细节，否则以后改实现就得改测试
 
 PyCharm：右键本文件 → Run 'Unittests in test_tools'
-命令行： cd 阶段4_重写 ; python -m unittest test_tools -v
+命令行： cd 阶段4 ; python -m unittest test_tools -v
 """
 from unittest import result
 
@@ -21,7 +21,7 @@ from pathlib import Path
 # 所以先把自己的目录插进去，下一行才能 import support。
 sys.path.insert(0, str(Path(__file__).parent))
 
-# 注意：support 被 import 时，会把 阶段3_重写 也加进 sys.path —— agent / tools 才能 import。
+# 注意：support 被 import 时，会把 阶段3 也加进 sys.path —— agent / tools 才能 import。
 from support import build_registry
 
 
