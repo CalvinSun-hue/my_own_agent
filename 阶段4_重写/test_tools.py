@@ -11,10 +11,17 @@
 PyCharm：右键本文件 → Run 'Unittests in test_tools'
 命令行： cd 阶段4_重写 ; python -m unittest test_tools -v
 """
+from unittest import result
 
+import sys
 import unittest
+from pathlib import Path
 
-# 注意 import 顺序：先 import support，它会把 阶段3_重写 加进 sys.path。
+# PyCharm 右键 Run 时，测试文件是"按文件路径 import"的，本目录不会自动进 sys.path；
+# 所以先把自己的目录插进去，下一行才能 import support。
+sys.path.insert(0, str(Path(__file__).parent))
+
+# 注意：support 被 import 时，会把 阶段3_重写 也加进 sys.path —— agent / tools 才能 import。
 from support import build_registry
 
 
@@ -30,7 +37,15 @@ class TestToolSchema(unittest.TestCase):
           2. properties["a"]["type"] 和 properties["b"]["type"] == "integer"
           3. properties["a"]["description"] 和 ["b"]["description"] 非空（内容 = build_registry 里写的）
          """
-        raise NotImplementedError("TODO 第 1 条：test_add_tool_schema_required")
+        data = build_registry().tools["add"].schema()
+        params = data["function"]["parameters"]
+        props = params["properties"]
+        self.assertEqual(sorted(params["required"]), ["a", "b"])
+        self.assertEqual(props["a"]["type"],"integer")
+        self.assertEqual(props["b"]["type"],"integer")
+        self.assertTrue(props["a"]["description"])
+        self.assertTrue(props["b"]["description"])
+
 
     def test_hello_schema_has_description(self):
         """要验证什么：hello 的 schema 里，工具描述和参数描述都不能丢。
@@ -40,7 +55,9 @@ class TestToolSchema(unittest.TestCase):
         为什么单独测它：描述是模型判断"该不该调这个工具"的唯一依据。
         丢一个字段，模型就变成瞎猜 —— 这种错不会报错、也不会崩，最难发现。
         """
-        raise NotImplementedError("TODO 第 3 条：test_hello_schema_has_description")
+        fn = build_registry().tools["hello"].schema()["function"]
+        self.assertEqual(fn["description"], "打个招呼。")
+        self.assertEqual(fn["parameters"]["properties"]["name"]["description"], "对方的名字")
 
 
 class TestExecute(unittest.TestCase):
@@ -55,7 +72,9 @@ class TestExecute(unittest.TestCase):
         为什么第 2 条不能省：== "5" 已经能挡住数字 5，但单独断类型能让报错一眼看出病因；
         更重要的原因：模型只能读文本，返回 int 会让下一次请求组装失败（阶段 3 §4.6 讲过）。
         """
-        raise NotImplementedError("TODO 第 2 条：test_execute_add_returns_string")
+        result = build_registry().execute("add", '{"a": 2, "b": 3}')
+        self.assertEqual(result, "5")
+        self.assertIsInstance(result, str)
 
     def test_hello_uses_default_arg(self):
         """要验证什么：hello 不传 name 时，用默认值"同学"。
@@ -66,7 +85,10 @@ class TestExecute(unittest.TestCase):
         为什么两个都要：只测行为的话，把 name 错写进 required，模型每次都会硬塞一个名字，
         默认值永远用不上 —— 行为测试还是绿的。必须"实现 + 说明书"两处一致才算对。
         """
-        raise NotImplementedError("TODO 第 4 条：test_hello_uses_default_arg")
+        reg = build_registry()
+        self.assertEqual(reg.execute("hello", "{}"), "你好，同学")
+        required = reg.tools["hello"].schema()["function"]["parameters"]["required"]
+        self.assertEqual(required, [])
 
 
 if __name__ == "__main__":

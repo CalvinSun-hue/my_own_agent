@@ -90,6 +90,7 @@ class Agent:
             # TODO 日志①（1 行）：每轮请求开头记一条 info
             #   内容：第几轮（step + 1）+ 当前历史条数（len(self.messages)）
             #   用途：事后能还原"模型当时看到的是多长的对话"（排查越聊越傻的经典手段）
+            log.info("第 %d 轮请求，历史 %d 条", step + 1, len(self.messages))
             msg = self._call_model()
             if not msg.tool_calls:
                 text = msg.content or ""
@@ -108,9 +109,11 @@ class Agent:
             for tc in msg.tool_calls:
                 # TODO 日志②-a（1 行）：执行**前**记一条 info：工具名 + 参数原文
                 #   （参数原文 = tc.function.arguments；这是 test_agent_log.py 第 5 条的数据来源）
+                log.info("调用工具 %s，参数 %s", tc.function.name, tc.function.arguments)
                 result = self.registry.execute(tc.function.name, tc.function.arguments)
                 # TODO 日志②-b（1 行）：执行**后**记一条 info：工具名 + result
                 #   （这是 test_agent_log.py 第 6 条的数据来源）
+                log.info("工具 %s 返回 %s", tc.function.name, result)
                 self.messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
@@ -134,9 +137,15 @@ class Agent:
           - 为什么必须 raise：日志是"记录"，不是"处理"；吞掉异常会让上层误以为成功
           - 现有的两行代码要缩进进 try 里（这是阶段 4 唯一改结构的地方）
         """
-        resp = self.client.chat.completions.create(
-            model = self.model,
-            messages = self.messages,
-            tools = self.registry.schemas() or None,
-        )
-        return resp.choices[0].message
+        try:
+            resp = self.client.chat.completions.create(
+                model = self.model,
+                messages = self.messages,
+                tools = self.registry.schemas() or None,
+            )
+            return resp.choices[0].message
+        except Exception:
+            log.exception("模型调用失败")
+            raise
+
+

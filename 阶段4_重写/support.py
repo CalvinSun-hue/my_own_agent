@@ -64,11 +64,12 @@ class TmpDirTest(unittest.TestCase):
           - 把 Path(那个 .name) 存成 self.dir —— 后面拼文件路径用
         为什么两样都存：对象被回收时目录会被自动删掉，所以 tearDown 也要靠它来清理。
         """
-        raise NotImplementedError("TODO 第 3 步：TmpDirTest.setUp")
+        self._tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self._tmp.name)
 
     def tearDown(self) -> None:
         """TODO 第 3 步（1 行）：清理临时目录（调用 TemporaryDirectory 的 cleanup()）。"""
-        raise NotImplementedError("TODO 第 3 步：TmpDirTest.tearDown")
+        self._tmp.cleanup()
 
 
 # ---------------------------------------------------------------------------
@@ -88,8 +89,14 @@ def build_registry() -> ToolRegistry:
     提示：阶段3_重写/test_tools.py 里有个一模一样的 make_registry()，照它写。
           —— 这是"复习"，不是新知识。
     """
-    raise NotImplementedError("TODO 第 1 步：build_registry")
-
+    reg = ToolRegistry()
+    @reg.tool("把两个整数相加。", params = {"a":"第一个加数","b":"第二个加数"})
+    def add(a: int, b: int) -> int:
+        return a+b
+    @reg.tool("打个招呼。",params = {"name":"对方的名字"})
+    def hello(name: str = "同学") -> str:
+        return f"你好，{name}"
+    return reg
 
 # ---------------------------------------------------------------------------
 # 3. 两个小工具：捏"模型回复"的形状（真 SDK 里就长这样）
@@ -132,7 +139,12 @@ class FakeToolClient:
           3. 造 self.chat，使 self.chat.completions.create 等价于 self._create
              提示：用 SimpleNamespace 层层套（chat → completions → create）。
         """
-        raise NotImplementedError("TODO 第 3 步：FakeToolClient.__init__")
+
+        self.script = list(script)
+        self.calls = []
+        self.chat = SimpleNamespace(
+            completions=SimpleNamespace(create = self._create)
+        )
 
     def _create(self, model, messages, tools=None, **kwargs):
         """TODO 第 3 步（3 行）：记一笔请求，从剧本弹出一条回复，包成真 SDK 的形状。
@@ -143,7 +155,13 @@ class FakeToolClient:
         2. message = self.script.pop(0)      ← 按顺序取剧本
         3. 返回 SimpleNamespace(choices=[SimpleNamespace(message=message)])
         """
-        raise NotImplementedError("TODO 第 3 步：FakeToolClient._create")
+        self.calls.append({
+            "model": model,
+            "messages": [dict(m) for m in messages],
+            "tools": tools
+        })
+        message = self.script.pop(0)
+        return SimpleNamespace(choices=[SimpleNamespace(message=message)])
 
 
 # ---------------------------------------------------------------------------
@@ -178,14 +196,21 @@ class capture_logs:
           3. self.root = logging.getLogger()   ← 根日志器（root logger）：所有 log 默认向上冒泡到这里
           4. self.old_level = self.root.level  ← 记下旧级别，__exit__ 要还回去
         """
-        raise NotImplementedError("TODO 第 4 步：capture_logs.__init__")
+        self.path = Path(path)
+        self.handler = logging.FileHandler(self.path, encoding="utf-8")
+        self.handler.setFormatter(logging.Formatter("%(levelname)s %(name)s %(message)s"))
+        self.root = logging.getLogger()
+        self.old_level = self.root.level
+        self.level = level
 
     def __enter__(self) -> Path:
         """TODO 第 4 步（2 行）：把 handler 挂到根日志器上、把根日志器级别调到 level。
 
         然后 return self.path（with ... as log_path 拿到的就是它）。
         """
-        raise NotImplementedError("TODO 第 4 步：capture_logs.__enter__")
+        self.root.addHandler(self.handler)
+        self.root.setLevel(self.level)
+        return self.path
 
     def __exit__(self, *exc_info) -> None:
         """TODO 第 4 步（2~3 行）：摘掉 handler + 关闭它 + 恢复根日志器级别。
@@ -194,4 +219,7 @@ class capture_logs:
         你读文件就会读到空内容（本阶段最容易踩的坑）。
         为什么必须恢复 level：否则会污染后面所有测试 —— 测试之间绝不能有顺序依赖。
         """
-        raise NotImplementedError("TODO 第 4 步：capture_logs.__exit__")
+        self.root.removeHandler(self.handler)
+        self.handler.close()
+        self.root.setLevel(self.old_level)
+
